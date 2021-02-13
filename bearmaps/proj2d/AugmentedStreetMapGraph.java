@@ -9,7 +9,6 @@ import bearmaps.proj2d.utils.HashTrieMap;
 import bearmaps.proj2d.utils.TrieMap;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * An augmented graph that is more powerful that a standard StreetMapGraph.
@@ -22,6 +21,7 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
     private final Map<Point, Long> pointIDMap;
     private final PointSet pointSet;
     private final TrieMap<List<Map<String, Object>>> nameLocationsMap;
+    private final Map<String, String> cleanFullMap;
 
     public AugmentedStreetMapGraph(String dbPath) {
         super(dbPath);
@@ -29,6 +29,7 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
         List<Node> nodes = this.getNodes();
         pointIDMap = new HashMap<>();
         nameLocationsMap = new HashTrieMap<>();
+        cleanFullMap = new HashMap<>();
         for (Node n : nodes) {
             double lon = n.lon();
             double lat = n.lat();
@@ -42,10 +43,12 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
                 location.put("lon", lon);
                 location.put("name", name);
                 location.put("id", id);
-                List<Map<String, Object>> locations = nameLocationsMap.get(cleanString(name));
+                String cleaned = cleanString(name);
+                List<Map<String, Object>> locations = nameLocationsMap.get(cleaned);
                 if (locations == null) {
                     locations = new LinkedList<>();
-                    nameLocationsMap.put(cleanString(name), locations);
+                    nameLocationsMap.put(cleaned, locations);
+                    cleanFullMap.put(cleaned, name);
                 }
                 locations.add(location);
             }
@@ -77,14 +80,9 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
      */
     public List<String> getLocationsByPrefix(String prefix) {
         List<String> cleanedNames = nameLocationsMap.keysWithPrefix(prefix, 20);
-        List<String> fullNames = new LinkedList<>();
+        List<String> fullNames = new ArrayList<>();
         for (String cleaned : cleanedNames) {
-            String[] words = cleaned.split(" ");
-            List<String> capital = new ArrayList<>();
-            for (String w : words) {
-                capital.add(w.substring(0, 1).toUpperCase() + w.substring(1));
-            }
-            fullNames.add(String.join(" ", capital));
+            fullNames.add(cleanFullMap.get(cleaned));
         }
         return fullNames;
     }

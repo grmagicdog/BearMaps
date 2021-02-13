@@ -141,12 +141,12 @@ public class HashTrieMap<V> implements TrieMap<V> {
             if (isKey && nextBest.size() == 0) {
                 keepNAdder(keyScore, prefix, score, n);
             }
-            while (nextBest.size() != 0) {
+            if (nextBest.size() != 0) {
                 Tuple<String, Node> maxNext = nextBest.removeSmallest();
                 if (maxNext.getSecond().best <= score && isKey) {
                     keepNAdder(keyScore, prefix, score, n);
                     if (keyScore.size() >= n) {
-                        break;
+                        return keyScore;
                     }
                 }
                 maxNext.getSecond().keysWithPrefixHelper(maxNext.getFirst(), keyScore, n, nextBest);
