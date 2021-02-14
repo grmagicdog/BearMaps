@@ -14,6 +14,9 @@ import java.util.*;
  * An augmented graph that is more powerful that a standard StreetMapGraph.
  * Specifically, it supports the following additional operations:
  *
+ * closest
+ * getLocationsByPrefix
+ * getLocations
  *
  * @author Alan Yao, Josh Hug, Rui Gao
  */
@@ -25,7 +28,6 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
 
     public AugmentedStreetMapGraph(String dbPath) {
         super(dbPath);
-        // You might find it helpful to uncomment the line below:
         List<Node> nodes = this.getNodes();
         pointIDMap = new HashMap<>();
         nameLocationsMap = new HashTrieMap<>();
