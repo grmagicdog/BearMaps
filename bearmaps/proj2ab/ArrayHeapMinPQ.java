@@ -164,6 +164,12 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
         swim(i);
     }
 
+    @Override
+    public double getSmallestPriority() {
+        T smallestItem = getSmallest();
+        return info.get(smallestItem).priority;
+    }
+
     void print() {
         printFancyHeapDrawing(items.toArray());
     }

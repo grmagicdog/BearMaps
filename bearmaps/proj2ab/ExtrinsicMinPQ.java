@@ -17,4 +17,6 @@ public interface ExtrinsicMinPQ<T> {
     void changePriority(T item, double priority);
     /* Returns the number of items in the PQ. */
     int size();
+    /* Returns the priority of the minimum item. */
+    double getSmallestPriority();
 }

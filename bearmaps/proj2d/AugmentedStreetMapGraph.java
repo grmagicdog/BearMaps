@@ -81,7 +81,7 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
      * cleaned <code>prefix</code>.
      */
     public List<String> getLocationsByPrefix(String prefix) {
-        List<String> cleanedNames = nameLocationsMap.keysWithPrefix(prefix, 20);
+        List<String> cleanedNames = nameLocationsMap.keysWithPrefix(cleanString(prefix), 20);
         List<String> fullNames = new ArrayList<>();
         for (String cleaned : cleanedNames) {
             fullNames.add(cleanFullMap.get(cleaned));

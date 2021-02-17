@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-public interface TrieMap<V> extends Iterable<String>{
+public interface TrieMap<V> extends Iterable<String> {
     void put(String key, V value);
     V get(String key);
     boolean containsKey(String key);

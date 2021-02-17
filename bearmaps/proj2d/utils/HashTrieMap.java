@@ -129,29 +129,24 @@ public class HashTrieMap<V> implements TrieMap<V> {
         private List<String> keysWithPrefix(String prefix, int n) {
             ExtrinsicMinPQ<String> keyScore = new ArrayHeapMinPQ<>();
             ExtrinsicMinPQ<Tuple<String, Node>> nextBest = new ArrayHeapMinPQ<>();
-            return pqToList(keysWithPrefixHelper(prefix, keyScore, n, nextBest));
-        }
-
-        private ExtrinsicMinPQ<String> keysWithPrefixHelper(String prefix, ExtrinsicMinPQ<String> keyScore, int n, ExtrinsicMinPQ<Tuple<String, Node>> nextBest) {
-            for (Map.Entry<Character, Node> entry : next.entrySet()) {
-                String first = prefix + entry.getKey();
-                Node second = entry.getValue();
-                nextBest.add(new Tuple<>(first, second), -second.best);
-            }
-            if (isKey && nextBest.size() == 0) {
-                keepNAdder(keyScore, prefix, score, n);
-            }
-            if (nextBest.size() != 0) {
-                Tuple<String, Node> maxNext = nextBest.removeSmallest();
-                if (maxNext.getSecond().best <= score && isKey) {
-                    keepNAdder(keyScore, prefix, score, n);
-                    if (keyScore.size() >= n) {
-                        return keyScore;
-                    }
+            nextBest.add(new Tuple<>(prefix, this), -best);
+            while (nextBest.size() != 0) {
+                Tuple<String, Node> p = nextBest.removeSmallest();
+                String prefixSoFar = p.getFirst();
+                Node node = p.getSecond();
+                if (keyScore.size() >= n && node.best <= keyScore.getSmallestPriority()) {
+                    break;
                 }
-                maxNext.getSecond().keysWithPrefixHelper(maxNext.getFirst(), keyScore, n, nextBest);
+                if (node.isKey) {
+                    keepNAdder(keyScore, prefixSoFar, node.score, n);
+                }
+                for (Map.Entry<Character, Node> entry : node.next.entrySet()) {
+                    String first = prefixSoFar + entry.getKey();
+                    Node second = entry.getValue();
+                    nextBest.add(new Tuple<>(first, second), -second.best);
+                }
             }
-            return keyScore;
+            return pqToList(keyScore);
         }
 
         private <T> List<T> pqToList(ExtrinsicMinPQ<T> pq) {
